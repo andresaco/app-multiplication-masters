@@ -1,0 +1,7 @@
+{
+  "name": "Multiplication Masters: Tablas 1-10",
+  "description": "Un juego educativo e interactivo diseñado para que niños de 8-9 años dominen las tablas de multiplicar mediante desafíos secuenciales y aleatorios, evaluando tanto la precisión como la velocidad de respuesta.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
