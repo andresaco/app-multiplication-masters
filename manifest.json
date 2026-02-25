@@ -1,0 +1,35 @@
+
+{
+  "name": "Multiplication Masters",
+  "short_name": "MathMasters",
+  "description": "¡Conviértete en un maestro de las matemáticas jugando!",
+  "start_url": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F8FBFF",
+  "theme_color": "#2563EB",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3771/3771278.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3771/3771278.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "games"],
+  "screenshots": [
+    {
+      "src": "https://picsum.photos/seed/math1/540/720",
+      "sizes": "540x720",
+      "type": "image/jpg",
+      "form_factor": "narrow",
+      "label": "Pantalla de juego"
+    }
+  ]
+}

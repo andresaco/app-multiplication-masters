@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Quicksand", ui-sans-serif, system-ui, sans-serif;
+  --font-fredoka: "Fredoka One", cursive;
+}
+
+/* Custom styles for very short screens (keyboard open) */
+@media (max-height: 500px) {
+  .main-content {
+    margin-top: 0 !important;
+  }
+  
+  nav {
+    padding: 0.5rem !important;
+  }
+
+  nav span {
+    display: none !important;
+  }
+
+  .playing-container {
+    min-height: 0 !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+
+  .playing-card {
+    padding: 1rem !important;
+    border-radius: 1rem !important;
+  }
+
+  .playing-header {
+    margin-bottom: 0.5rem !important;
+  }
+
+  .playing-score {
+    font-size: 1.5rem !important;
+  }
+
+  .playing-badge {
+    display: none !important;
+  }
+
+  .playing-question {
+    font-size: 3rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .playing-input {
+    font-size: 2.5rem !important;
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
+    border-radius: 0.75rem !important;
+  }
+
+  .playing-progress {
+    margin-top: 0.5rem !important;
+  }
+}
