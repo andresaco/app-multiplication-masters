@@ -4,20 +4,24 @@ import { PerformanceRating, Medal, UserProgress, TableProgress, GameMode } from 
 export const TABLES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const STORAGE_KEY = 'math_masters_v2_progress';
 
-export const calculatePoints = (timeMs: number, isCorrect: boolean): number => {
+export const calculatePoints = (timeMs: number, isCorrect: boolean, isVoice: boolean): number => {
   if (!isCorrect) return 0;
   let points = 100; // Base
-  if (timeMs < 2000) points += 150;
-  else if (timeMs < 4000) points += 75;
-  else if (timeMs < 6000) points += 25;
+  const threshold = isVoice ? 1500 : 0; // Grace period for voice recognition
+  
+  if (timeMs < 2000 + threshold) points += 150;
+  else if (timeMs < 4000 + threshold) points += 75;
+  else if (timeMs < 6000 + threshold) points += 25;
   return points;
 };
 
-export const getRating = (timeMs: number, isCorrect: boolean): PerformanceRating => {
+export const getRating = (timeMs: number, isCorrect: boolean, isVoice: boolean): PerformanceRating => {
   if (!isCorrect) return { label: 'Incorrecto', color: 'bg-red-500', emoji: '❌' };
-  if (timeMs < 2000) return { label: 'Experto Relámpago', color: 'bg-yellow-400', emoji: '⚡' };
-  if (timeMs < 4000) return { label: 'Muy Rápido', color: 'bg-green-500', emoji: '🚀' };
-  if (timeMs < 6000) return { label: 'Bien Hecho', color: 'bg-blue-500', emoji: '⭐' };
+  const threshold = isVoice ? 1500 : 0;
+  
+  if (timeMs < 2000 + threshold) return { label: 'Experto Relámpago', color: 'bg-yellow-400', emoji: '⚡' };
+  if (timeMs < 4000 + threshold) return { label: 'Muy Rápido', color: 'bg-green-500', emoji: '🚀' };
+  if (timeMs < 6000 + threshold) return { label: 'Bien Hecho', color: 'bg-blue-500', emoji: '⭐' };
   return { label: 'Sigue Practicando', color: 'bg-purple-400', emoji: '🐢' };
 };
 

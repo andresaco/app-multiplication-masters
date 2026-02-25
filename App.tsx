@@ -78,7 +78,7 @@ const App: React.FC = () => {
   }, []);
 
   // Lógica de respuesta centralizada
-  const handleFinalSubmit = useCallback((valueStr: string) => {
+  const handleFinalSubmit = useCallback((valueStr: string, isVoice: boolean = false) => {
     const val = parseInt(valueStr);
     if (isNaN(val)) return;
 
@@ -92,7 +92,7 @@ const App: React.FC = () => {
     const correctAnswer = selectedTable * currentFactor;
     const isCorrect = val === correctAnswer;
     const timeTaken = Date.now() - startTime;
-    const points = calculatePoints(timeTaken, isCorrect);
+    const points = calculatePoints(timeTaken, isCorrect, isVoice);
 
     const newResult: Result = {
       factor1: selectedTable,
@@ -101,6 +101,7 @@ const App: React.FC = () => {
       correctAnswer,
       timeTaken,
       isCorrect,
+      isVoice,
       points
     };
 
@@ -155,7 +156,7 @@ const App: React.FC = () => {
     const recognition = new SpeechRecognition();
     recognition.lang = 'es-ES';
     recognition.continuous = true;
-    recognition.interimResults = false;
+    recognition.interimResults = true;
 
     recognition.onstart = () => {
       setIsListening(true);
@@ -210,17 +211,53 @@ const App: React.FC = () => {
         setInterimTranscript(interim);
       }
 
-      const match = finalTranscript.match(/\d+/);
+      const parseToNumber = (text: string): string | null => {
+        const lower = text.toLowerCase();
+        const digitMatch = lower.match(/\d+/);
+        if (digitMatch) return digitMatch[0];
+
+        const numMap: Record<string, number> = {
+          'cero': 0, 'uno': 1, 'una': 1, 'dos': 2, 'tres': 3, 'cuatro': 4,
+          'cinco': 5, 'seis': 6, 'siete': 7, 'ocho': 8, 'nueve': 9, 'diez': 10,
+          'once': 11, 'doce': 12, 'trece': 13, 'catorce': 14, 'quince': 15,
+          'dieciseis': 16, 'dieciséis': 16, 'diecisiete': 17, 'dieciocho': 18, 'diecinueve': 19,
+          'veinte': 20, 'veintiuno': 21, 'veintidos': 22, 'veintidós': 22, 'veintitres': 23, 'veintitrés': 23,
+          'veinticuatro': 24, 'veinticinco': 25, 'veintiseis': 26, 'veintiséis': 26, 'veintisiete': 27,
+          'veintiocho': 28, 'veintinueve': 29, 'treinta': 30, 'cuarenta': 40, 'cincuenta': 50,
+          'sesenta': 60, 'setenta': 70, 'ochenta': 80, 'noventa': 90, 'cien': 100
+        };
+
+        const tens = ['treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
+        for (const ten of tens) {
+           const regex = new RegExp(`${ten}\\s+y\\s+(\\w+)`);
+           const match = lower.match(regex);
+           if (match) {
+             const unit = match[1];
+             if (numMap[unit] !== undefined && numMap[unit] < 10) {
+               return (numMap[ten] + numMap[unit]).toString();
+             }
+           }
+        }
+
+        const words = lower.split(/[\s,.!¡¿?]+/);
+        for (const word of words) {
+          if (numMap[word] !== undefined) {
+            return numMap[word].toString();
+          }
+        }
+        return null;
+      };
       
-      if (match) {
-        const num = match[0];
+      const num = parseToNumber(finalTranscript);
+      
+      if (num) {
         setInterimTranscript('');
         if (gameStateRef.current.status === GameStatus.VOICE_CHECK) {
           setVoiceTestResult(num);
           setMicError(null);
         } else if (gameStateRef.current.status === GameStatus.PLAYING) {
           setInputValue(num);
-          setTimeout(() => handleFinalSubmit(num), 300);
+          setTimeout(() => handleFinalSubmit(num, true), 300);
         }
       }
     };
@@ -552,7 +589,7 @@ const App: React.FC = () => {
               inputMode="numeric"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleFinalSubmit(inputValue)}
+              onKeyDown={(e) => e.key === 'Enter' && handleFinalSubmit(inputValue, false)}
               className={`w-full text-center text-5xl sm:text-7xl font-fredoka py-2 sm:py-6 bg-gray-50 border-4 rounded-2xl sm:rounded-[32px] focus:outline-none transition-all ${
                 isListening ? 'border-green-400 shadow-[0_0_30px_rgba(74,222,128,0.2)]' : 'border-blue-400'
               } text-blue-600 playing-input`}
@@ -596,14 +633,17 @@ const App: React.FC = () => {
     const chartData = results.map((r, i) => ({
       name: `${r.factor1}×${r.factor2}`,
       time: parseFloat((r.timeTaken / 1000).toFixed(2)),
-      isCorrect: r.isCorrect
+      isCorrect: r.isCorrect,
+      isVoice: r.isVoice
     }));
 
     // Función para obtener color según tiempo (Verde < 2s, Amarillo < 4s, Rojo > 6s)
-    const getColor = (time: number) => {
-      if (time < 2) return '#22c55e'; // green-500
-      if (time < 4) return '#eab308'; // yellow-500
-      if (time < 6) return '#f97316'; // orange-500
+    // Ajustado para voz: si es voz, el umbral es mayor
+    const getColor = (time: number, isVoice: boolean) => {
+      const threshold = isVoice ? 1.5 : 0;
+      if (time < 2 + threshold) return '#22c55e'; // green-500
+      if (time < 4 + threshold) return '#eab308'; // yellow-500
+      if (time < 6 + threshold) return '#f97316'; // orange-500
       return '#ef4444'; // red-500
     };
     
@@ -661,17 +701,20 @@ const App: React.FC = () => {
                   />
                   <Bar dataKey="time" radius={[8, 8, 0, 0]} barSize={40}>
                     {chartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={getColor(entry.time)} />
+                      <Cell key={`cell-${index}`} fill={getColor(entry.time, entry.isVoice)} />
                     ))}
                     <LabelList dataKey="time" position="top" style={{ fill: '#4b5563', fontSize: 10, fontWeight: 700 }} />
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <div className="mt-4 flex justify-center gap-6 text-[10px] font-bold uppercase tracking-wider text-gray-400">
-              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-green-500"></div> Rápido (&lt;2s)</div>
-              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-yellow-500"></div> Normal (2-4s)</div>
-              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-red-500"></div> Lento (&gt;4s)</div>
+            <div className="mt-4 flex flex-col items-center gap-2">
+              <div className="flex justify-center gap-6 text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-green-500"></div> Rápido</div>
+                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-yellow-500"></div> Normal</div>
+                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-red-500"></div> Lento</div>
+              </div>
+              <p className="text-[10px] text-gray-400 italic">Nota: El modo voz tiene un margen de tiempo extra de 1.5s</p>
             </div>
           </div>
 
@@ -686,6 +729,7 @@ const App: React.FC = () => {
                     <span className="text-gray-400 font-bold text-sm">#{i+1}</span>
                     <span className="text-xl font-bold text-gray-700">{r.factor1} × {r.factor2} = </span>
                     <span className={`text-xl font-fredoka ${r.isCorrect ? 'text-green-600' : 'text-red-600'}`}>{r.userAnswer}</span>
+                    {r.isVoice && <span className="text-xs" title="Voz">🎤</span>}
                   </div>
                   {!r.isCorrect && (
                     <div className="text-right">

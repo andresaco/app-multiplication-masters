@@ -26,6 +26,7 @@ export interface Result {
   correctAnswer: number;
   timeTaken: number; // in milliseconds
   isCorrect: boolean;
+  isVoice: boolean;
   points: number;
 }
 
