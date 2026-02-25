@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Multiplication Masters</title>
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MathMasters">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3771/3771278.png">
+    <link rel="manifest" href="./assets/manifest-DGeOWuaL.json">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: #f0f9ff;
+        }
+        .font-fredoka {
+            font-family: 'Fredoka One', cursive;
+        }
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(-5%); }
+            50% { transform: translateY(0); }
+        }
+        .animate-bounce-slow {
+            animation: bounce-slow 2s infinite;
+        }
+
+        @media print {
+            nav, footer, .no-print, button {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .print-grid {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 20px !important;
+                width: 100% !important;
+            }
+            .table-card {
+                border: 2px solid #e2e8f0 !important;
+                break-inside: avoid;
+                padding: 10px !important;
+                border-radius: 8px !important;
+            }
+            .main-content {
+                margin: 0 !important;
+                width: 100% !important;
+                max-width: none !important;
+            }
+        }
+    </style>
+
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai"
+  }
+}
+</script>
+  <script type="module" crossorigin src="./assets/index-CE5orEyp.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-QWHzUFxt.css">
+</head>
+<body class="overflow-x-hidden">
+    <div id="root"></div>
+    <!-- Punto de entrada de la aplicación -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW error:', err));
+        });
+      }
+    </script>
+</body>
+</html>
