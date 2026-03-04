@@ -31,6 +31,11 @@ export const useVoiceRecognition = ({ status, isVoiceEnabled, onResult }: VoiceR
     isVoiceEnabledRef.current = isVoiceEnabled;
   }, [status, isVoiceEnabled]);
 
+  const onResultRef = useRef(onResult);
+  useEffect(() => {
+    onResultRef.current = onResult;
+  }, [onResult]);
+
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
@@ -93,7 +98,9 @@ export const useVoiceRecognition = ({ status, isVoiceEnabled, onResult }: VoiceR
       }
 
       const parseToNumber = (text: string): string | null => {
-        const lower = text.toLowerCase();
+        const lower = text.trim().toLowerCase();
+        if (!lower) return null;
+
         const digitMatch = lower.match(/\d+/);
         if (digitMatch) return digitMatch[0];
 
@@ -108,7 +115,7 @@ export const useVoiceRecognition = ({ status, isVoiceEnabled, onResult }: VoiceR
           'sesenta': 60, 'setenta': 70, 'ochenta': 80, 'noventa': 90, 'cien': 100
         };
 
-        const tens = ['treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
+        const tens = ['veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
         for (const ten of tens) {
            const regex = new RegExp(`${ten}\\s+y\\s+(\\w+)`);
            const match = lower.match(regex);
@@ -132,7 +139,7 @@ export const useVoiceRecognition = ({ status, isVoiceEnabled, onResult }: VoiceR
       const num = parseToNumber(finalTranscript);
       if (num) {
         setInterimTranscript('');
-        onResult(num);
+        onResultRef.current(num);
       }
     };
 
@@ -141,7 +148,7 @@ export const useVoiceRecognition = ({ status, isVoiceEnabled, onResult }: VoiceR
     return () => {
       try { recognition.stop(); } catch(e) {}
     };
-  }, [onResult]);
+  }, []);
 
   const startListening = async () => {
     setMicError(null);

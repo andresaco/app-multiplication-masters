@@ -31,14 +31,14 @@ const App: React.FC = () => {
   const [isSecureContext, setIsSecureContext] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const onVoiceResult = (num: string) => {
+  const onVoiceResult = React.useCallback((num: string) => {
     if (status === GameStatus.VOICE_CHECK) {
       setVoiceTestResult(num);
     } else if (status === GameStatus.PLAYING) {
       setInputValue(num);
       setTimeout(() => handleFinalSubmit(num, true), 300);
     }
-  };
+  }, [status, setVoiceTestResult, setInputValue, handleFinalSubmit]);
 
   const { 
     isListening, 
