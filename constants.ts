@@ -7,7 +7,7 @@ const STORAGE_KEY = 'math_masters_v2_progress';
 export const calculatePoints = (timeMs: number, isCorrect: boolean, isVoice: boolean): number => {
   if (!isCorrect) return 0;
   let points = 100; // Base
-  const threshold = isVoice ? 1800 : 0; // Grace period for voice recognition
+  const threshold = isVoice ? 1500 : 0; // Grace period for voice recognition
   
   if (timeMs < 2000 + threshold) points += 150;
   else if (timeMs < 4000 + threshold) points += 75;
