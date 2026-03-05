@@ -7,6 +7,7 @@ export enum GameMode {
 export enum GameStatus {
   INTRO = 'intro',
   VOICE_CHECK = 'voice_check',
+  COUNTDOWN = 'countdown',
   PLAYING = 'playing',
   FINISHED = 'finished',
   GALLERY = 'gallery',
