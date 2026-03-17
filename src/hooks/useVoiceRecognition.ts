@@ -57,15 +57,6 @@ export const useVoiceRecognition = ({ status, isVoiceEnabled, onResult }: VoiceR
     recognition.onend = () => {
       setIsListening(false);
       setInterimTranscript('');
-      if (isVoiceEnabledRef.current && (statusRef.current === GameStatus.PLAYING || statusRef.current === GameStatus.VOICE_CHECK)) {
-        setTimeout(() => {
-          try {
-            if (isVoiceEnabledRef.current) {
-              recognition.start();
-            }
-          } catch (e) {}
-        }, 300);
-      }
     };
 
     recognition.onerror = (event: any) => {
@@ -140,6 +131,12 @@ export const useVoiceRecognition = ({ status, isVoiceEnabled, onResult }: VoiceR
       if (num) {
         setInterimTranscript('');
         onResultRef.current(num);
+        // Delay stop to ensure result is processed first
+        setTimeout(() => {
+          try {
+            recognitionRef.current?.stop();
+          } catch(e) {}
+        }, 50);
       }
     };
 

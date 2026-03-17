@@ -65,6 +65,22 @@ const App: React.FC = () => {
     }
   }, [status]);
 
+  useEffect(() => {
+    // Stop listening when voice test result is obtained in VOICE_CHECK
+    // or when leaving VOICE_CHECK without voice
+    if (status === GameStatus.VOICE_CHECK && voiceTestResult) {
+      stopListening();
+    } else if (status !== GameStatus.VOICE_CHECK && isListening) {
+      stopListening();
+    }
+  }, [status, voiceTestResult, isListening, stopListening]);
+
+  useEffect(() => {
+    if (status === GameStatus.PLAYING && isVoiceEnabled && !isListening) {
+      startListening();
+    }
+  }, [status, isVoiceEnabled, currentIndex, isListening, startListening]);
+
   const toggleVoiceMode = () => {
     const nextState = !isVoiceEnabled;
     setIsVoiceEnabled(nextState);
