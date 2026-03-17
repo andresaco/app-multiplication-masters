@@ -6,9 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "generate-build-info": "node scripts/generateBuildInfo.cjs",
     "preview": "vite preview",
     "lint": "tsc --noEmit",
-    "predeploy": "npm run build",
+    "predeploy": "npm run generate-build-info && npm run build",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
