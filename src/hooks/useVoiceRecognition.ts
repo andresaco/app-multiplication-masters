@@ -22,6 +22,7 @@ export const useVoiceRecognition = ({ status, isVoiceEnabled, onResult }: VoiceR
   const [micError, setMicError] = useState<string | null>(null);
   const [interimTranscript, setInterimTranscript] = useState('');
   const recognitionRef = useRef<any>(null);
+  const hasProcessedResultRef = useRef(false);
 
   const statusRef = useRef(status);
   const isVoiceEnabledRef = useRef(isVoiceEnabled);
@@ -128,15 +129,18 @@ export const useVoiceRecognition = ({ status, isVoiceEnabled, onResult }: VoiceR
       };
 
       const num = parseToNumber(finalTranscript);
-      if (num) {
+      if (num && !hasProcessedResultRef.current) {
+        // Mark as processed immediately to prevent duplicate calls
+        hasProcessedResultRef.current = true;
+        // Stop recognition BEFORE reporting the result
+        try {
+          recognitionRef.current?.stop();
+        } catch(e) {}
+        // Delay result reporting to ensure stop() completes
         setInterimTranscript('');
-        onResultRef.current(num);
-        // Delay stop to ensure result is processed first
         setTimeout(() => {
-          try {
-            recognitionRef.current?.stop();
-          } catch(e) {}
-        }, 50);
+          onResultRef.current(num);
+        }, 100);
       }
     };
 
@@ -149,6 +153,7 @@ export const useVoiceRecognition = ({ status, isVoiceEnabled, onResult }: VoiceR
 
   const startListening = async () => {
     setMicError(null);
+    hasProcessedResultRef.current = false;
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
       recognitionRef.current?.start();
@@ -158,6 +163,7 @@ export const useVoiceRecognition = ({ status, isVoiceEnabled, onResult }: VoiceR
   };
 
   const stopListening = () => {
+    hasProcessedResultRef.current = false;
     try { recognitionRef.current?.stop(); } catch(e) {}
   };
 
