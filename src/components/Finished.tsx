@@ -28,15 +28,13 @@ const Finished: React.FC<FinishedProps> = ({
   const chartData = results.map((r, i) => ({
     name: `${r.factor1}×${r.factor2}`,
     time: parseFloat((r.timeTaken / 1000).toFixed(2)),
-    isCorrect: r.isCorrect,
-    isVoice: r.isVoice
+    isCorrect: r.isCorrect
   }));
 
-  const getColor = (time: number, isVoice: boolean) => {
-    const threshold = isVoice ? 1.5 : 0;
-    if (time < 2 + threshold) return '#22c55e';
-    if (time < 4 + threshold) return '#eab308';
-    if (time < 6 + threshold) return '#f97316';
+  const getColor = (time: number) => {
+    if (time < 2) return '#22c55e';
+    if (time < 4) return '#eab308';
+    if (time < 6) return '#f97316';
     return '#ef4444';
   };
 
@@ -93,20 +91,17 @@ const Finished: React.FC<FinishedProps> = ({
                 />
                 <Bar dataKey="time" radius={[8, 8, 0, 0]} barSize={40}>
                   {chartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={getColor(entry.time, entry.isVoice)} />
+                    <Cell key={`cell-${index}`} fill={getColor(entry.time)} />
                   ))}
                   <LabelList dataKey="time" position="top" style={{ fill: '#4b5563', fontSize: 10, fontWeight: 700 }} />
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <div className="mt-4 flex flex-col items-center gap-2">
-            <div className="flex justify-center gap-6 text-[10px] font-bold uppercase tracking-wider text-gray-400">
-              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-green-500"></div> Rápido</div>
-              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-yellow-500"></div> Normal</div>
-              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-red-500"></div> Lento</div>
-            </div>
-            <p className="text-[10px] text-gray-400 italic">Nota: El modo voz tiene un margen de tiempo extra de 1.5s</p>
+          <div className="mt-4 flex justify-center gap-6 text-[10px] font-bold uppercase tracking-wider text-gray-400">
+            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-green-500"></div> Rápido</div>
+            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-yellow-500"></div> Normal</div>
+            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-red-500"></div> Lento</div>
           </div>
         </div>
 
@@ -121,7 +116,6 @@ const Finished: React.FC<FinishedProps> = ({
                   <span className="text-gray-400 font-bold text-sm">#{i+1}</span>
                   <span className="text-xl font-bold text-gray-700">{r.factor1} × {r.factor2} = </span>
                   <span className={`text-xl font-fredoka ${r.isCorrect ? 'text-green-600' : 'text-red-600'}`}>{r.userAnswer}</span>
-                  {r.isVoice && <span className="text-xs" title="Voz">🎤</span>}
                 </div>
                 {!r.isCorrect && (
                   <div className="text-right">

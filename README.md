@@ -5,7 +5,6 @@
 ## ✨ Características
 
 - **Modos de Juego**: Practica en orden (Secuencial) o desafíate con el modo "Saltando" (Aleatorio).
-- **Control por Voz**: ¡Responde usando tu voz! (Requiere navegador compatible como Chrome o Edge).
 - **Sistema de Medallas**: Gana medallas de Bronce, Plata, Oro y Diamante para cada tabla y cada modo.
 - **Sala de Trofeos**: Visualiza tu progreso y colecciona las 20 medallas disponibles.
 - **Estadísticas Detalladas**: Gráficos interactivos de velocidad para ver en qué multiplicaciones eres más rápido.

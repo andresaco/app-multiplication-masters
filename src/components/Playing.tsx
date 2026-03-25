@@ -3,8 +3,6 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface PlayingProps {
-  isListening: boolean;
-  isVoiceEnabled: boolean;
   totalScore: number;
   lastPoints: { points: number; visible: boolean };
   lastAnswerStatus: 'correct' | 'wrong' | null;
@@ -13,15 +11,11 @@ interface PlayingProps {
   currentIndex: number;
   inputValue: string;
   setInputValue: (val: string) => void;
-  onFinalSubmit: (val: string, isVoice: boolean) => void;
-  micError: string | null;
-  interimTranscript: string;
+  onFinalSubmit: (val: string, isVoice?: boolean) => void;
   inputRef: React.RefObject<HTMLInputElement | null>;
 }
 
 const Playing: React.FC<PlayingProps> = ({
-  isListening,
-  isVoiceEnabled,
   totalScore,
   lastPoints,
   lastAnswerStatus,
@@ -31,8 +25,6 @@ const Playing: React.FC<PlayingProps> = ({
   inputValue,
   setInputValue,
   onFinalSubmit,
-  micError,
-  interimTranscript,
   inputRef
 }) => {
   return (
@@ -42,10 +34,6 @@ const Playing: React.FC<PlayingProps> = ({
         
         <div className="flex justify-between items-start mb-4 sm:mb-12 relative z-10 playing-header">
           <div className="flex items-center gap-3">
-             <div className={`w-3 h-3 sm:w-4 sm:h-4 rounded-full ${isListening ? 'bg-green-500 animate-ping' : 'bg-gray-300'}`}></div>
-             <span className="text-[10px] sm:text-sm font-bold text-gray-400 uppercase tracking-widest">
-               {isVoiceEnabled ? (isListening ? 'Escuchando...' : 'Micro Pausado') : 'Teclado'}
-             </span>
           </div>
           <div className="text-right relative">
             <motion.div 
@@ -111,9 +99,7 @@ const Playing: React.FC<PlayingProps> = ({
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && onFinalSubmit(inputValue, false)}
-              className={`w-full text-center text-5xl sm:text-7xl font-fredoka py-2 sm:py-6 bg-gray-50 border-4 rounded-2xl sm:rounded-[32px] focus:outline-none transition-all ${
-                isListening ? 'border-green-400 shadow-[0_0_30px_rgba(74,222,128,0.2)]' : 'border-blue-400'
-              } text-blue-600 playing-input`}
+              className="w-full text-center text-5xl sm:text-7xl font-fredoka py-2 sm:py-6 bg-gray-50 border-4 border-blue-400 rounded-2xl sm:rounded-[32px] focus:outline-none transition-all text-blue-600 playing-input"
               placeholder="?"
               autoFocus
             />
@@ -122,23 +108,6 @@ const Playing: React.FC<PlayingProps> = ({
                 <div key={i} className={`h-2 sm:h-3 rounded-full transition-all duration-500 ${i < currentIndex ? 'bg-blue-500 w-4 sm:w-6' : 'bg-gray-200 w-2 sm:w-3'}`} />
               ))}
             </div>
-            {isVoiceEnabled && isListening && (
-              <div className="mt-4 flex flex-col items-center">
-                <p className="text-green-500 font-bold animate-pulse text-[10px] sm:text-sm">🎤 Di el resultado en voz alta...</p>
-                {interimTranscript && (
-                  <motion.div 
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="mt-2 bg-green-50 px-4 py-1 rounded-full border border-green-200 text-green-700 text-xs font-medium"
-                  >
-                    Escuchando: "{interimTranscript}"
-                  </motion.div>
-                )}
-              </div>
-            )}
-            {micError && (
-              <p className="mt-2 sm:mt-4 text-red-500 font-bold text-[10px] sm:text-xs">{micError}</p>
-            )}
           </div>
         </div>
       </div>
