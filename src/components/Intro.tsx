@@ -7,10 +7,6 @@ interface IntroProps {
   progress: UserProgress;
   selectedTable: number;
   setSelectedTable: (table: number) => void;
-  isVoiceEnabled: boolean;
-  toggleVoiceMode: () => void;
-  speechSupported: boolean;
-  isSecureContext: boolean;
   onStartFlow: (table: number, mode: GameMode) => void;
   onViewGallery: () => void;
   onViewStudy: () => void;
@@ -20,10 +16,6 @@ const Intro: React.FC<IntroProps> = ({
   progress,
   selectedTable,
   setSelectedTable,
-  isVoiceEnabled,
-  toggleVoiceMode,
-  speechSupported,
-  isSecureContext,
   onStartFlow,
   onViewGallery,
   onViewStudy
@@ -37,13 +29,6 @@ const Intro: React.FC<IntroProps> = ({
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] text-center p-4">
-      {!isSecureContext && (
-        <div className="bg-red-500 text-white p-4 rounded-2xl mb-8 font-bold shadow-lg animate-pulse max-w-lg">
-          ⚠️ ATENCIÓN: Estás abriendo el archivo directamente. El modo VOZ y otras funciones no funcionarán. 
-          <p className="font-normal text-sm mt-2">Usa un servidor local.</p>
-        </div>
-      )}
-
       <h1 className="text-6xl md:text-8xl font-fredoka text-blue-600 mb-2 drop-shadow-sm">Tablamanía</h1>
       <p className="text-xl md:text-2xl font-fredoka text-blue-400 mb-8">Aprende y domina las tablas de multiplicar</p>
       
@@ -57,16 +42,6 @@ const Intro: React.FC<IntroProps> = ({
         >
           📖 Repasa las tablas
         </button>
-        {speechSupported && isSecureContext && (
-          <button 
-            onClick={toggleVoiceMode}
-            className={`font-bold px-6 py-3 rounded-2xl border-2 transition-all flex items-center gap-2 shadow-sm ${
-              isVoiceEnabled ? 'bg-green-500 text-white border-green-600' : 'bg-white text-gray-500 border-gray-100'
-            }`}
-          >
-            {isVoiceEnabled ? '🎤 Modo Voz: ACTIVADO' : '🎙️ Usar Micrófono'}
-          </button>
-        )}
       </div>
 
       <div className="grid grid-cols-5 gap-3 mb-10 max-w-lg">
